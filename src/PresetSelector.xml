@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="gman.presetselector.PresetSelector" pluginWidget="true" needsEntityContext="true" offlineCapable="true"
+        supportedPlatform="Web"
+        xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
+    <name>Preset selector</name>
+    <description>Dropdown selector with list of database preset options</description>
+    <studioProCategory>Input</studioProCategory>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAA
+AARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsEAAA7BAbiRa+0AAAMuSURBVHhe7ZtZ
+j5UwGIaP+x5Hjfu+G+N6Y2KiURP//60X/gaNy5WTqPO+A0xqz9vyFVrgIE/yhA6n
+0IUCXZjVwsLCwsKwHIF34V/PB/AonB23oV9Yq/fgRnISqgL1cQtOnlNQZT6nZ2A2
+9tXbvvA8f6qgGT9tFi6F/TD1mDV4kr6ch5bCP4cHIAuuKr7ZzzhPuKMFpnm1Co6L
+2zyVfWHFqfO6jobKDH0Kc/MIqrQaO6GaopVQolnuzQDMb+x2Sy5P12eAKuALyAyU
+KjzhuZlG6BlRMu1dbkIm4jvGw+gCVHm5D4twEKoE+RYYC6at8sTudnZUQuzTj02o
+VZqwPjTYJ/9cBfeIHcvWkhsW6ncVXEMV+DH8VAXzYKldN04pr0OFittK8msjginB
+TKh8cwD2swr+Q7SMc6oAovIQLWOOscCUOFxvXS7VW0nOFkCGaAUcDn+rgpLkVjA3
++JBkJbj+d/gVcBxK5to01FWXZbU+BGd7D7VVAAc5rE0OQV9xx8Rwm7mrwhpvjyvQ
+P+AljOHHL6GL+j3FIOegOoDGxuJD2aB+S1ESK3yjqgQVr5QNfLqr3y3KYXzKvL4/
+FFZxSunSpRKuwTW6LGq4lRCaMMmtgqtGKq5SFv4YVJEt3oINJeYBrFgq4Q6UqMgp
+ToXQPCGNzhWqA1KcEhehn7/WiVL/gFSnhjsgesYdXWgWOFxnR6wrrFZgLIuWG0Xb
+IEdd9dAx3G9ZJc7BafijCvajbTB0ot66qH1kqMKT7/W2N5ZhrrUVDP2MsOS9Fct8
+gOo88H07C6y1aGkF/Huo2yDL1U/hMmQl+E6J4vlyE2js3MnICD+w9PNVBNUxomOu
+EKspcFqM0Hp8sY8SItyAKi+hxdNshL7aegeHghO0Kg+v4SCwsCoD9BAsReg2pIPD
+2lYZoW9hbkJXnX6Ao/AQqgw1foSWzlYIvu9jrY2O/iayfhn+Hlr+H4AfOL2B6hy+
+vT+cztmjYoashNLNcY4k+jRPH2bI+h8f7lV0tcAJ3GwXLmcLcOGbYLsKZoOV+6sK
+bhaWlaaQxT/CLNUC2jgLWTFcjCH8uusL/Lr718LCwsLCEKxWO85Hos44Z+oxAAAA
+AElFTkSuQmCC</icon>
+    <properties>
+        <propertyGroup caption="General">
+            <propertyGroup caption="Preset">
+                <property key="presetObject" type="datasource" required="true" isList="true">
+                    <caption>Object</caption>
+                    <description>List of preset objects to pull the presets from</description>
+                </property>
+                <property key="presetAttribute" type="attribute" required="true" dataSource="presetObject">
+                    <caption>Attribute</caption>
+                    <description>Attribute for preset selection
+
+Note: Preset and Target attribute types must be the same</description>
+                    <attributeTypes>
+                        <attributeType name="String" />
+                        <attributeType name="Binary" />
+                        <attributeType name="Boolean" />
+                        <attributeType name="DateTime" />
+                        <attributeType name="Decimal" />
+                        <attributeType name="Enum" />
+                        <attributeType name="HashString" />
+                        <attributeType name="Integer" />
+                        <attributeType name="Long" />
+                        <attributeType name="AutoNumber" />
+                    </attributeTypes>
+                </property>
+                <property key="allowDuplicates" type="boolean" defaultValue="false">
+                    <caption>Allow duplicates?</caption>
+                    <description></description>
+                    <!-- Not sure why you'd want this, but hey -->
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Target">
+                <property key="targetAttribute" type="attribute" required="true">
+                    <caption>Attribute</caption>
+                    <description>Target attribute to be changed to preset</description>
+                    <attributeTypes>
+                        <attributeType name="String" />
+                        <attributeType name="Binary" />
+                        <attributeType name="Boolean" />
+                        <attributeType name="DateTime" />
+                        <attributeType name="Decimal" />
+                        <attributeType name="Enum" />
+                        <attributeType name="HashString" />
+                        <attributeType name="Integer" />
+                        <attributeType name="Long" />
+                        <attributeType name="AutoNumber" />
+                    </attributeTypes>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Constraint">
+                <property key="constraint" type="expression" required="false" dataSource="presetObject">
+                    <caption>Expression</caption>
+                    <description>Use this to constrain the values that appear in the preset dropdown</description>
+                    <returnType type="Boolean"/>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Microflow">
+                <property key="onChange" type="action">
+                  <caption>On Change</caption>
+                  <description></description>
+                </property>
+            </propertyGroup>
+        </propertyGroup>
+    </properties>
+</widget>

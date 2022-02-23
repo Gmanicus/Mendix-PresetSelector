@@ -1,0 +1,33 @@
+{
+  "name": "presetselector",
+  "widgetName": "PresetSelector",
+  "version": "1.0.0",
+  "description": "Dropdown selector with list of database preset options",
+  "copyright": "2021 Grant Scritsmier",
+  "author": "Grant Scritsmier",
+  "engines": {
+    "node": ">=12"
+  },
+  "config": {
+    "projectPath": "C:\\Users\\Grant S\\Documents\\Mendix\\Lookup Preset Table System-main/",
+    "mendixHost": "http://localhost:8080",
+    "developmentPort": "3000"
+  },
+  "packagePath": "gman",
+  "scripts": {
+    "start": "pluggable-widgets-tools start:web",
+    "build": "pluggable-widgets-tools build:web",
+    "lint": "pluggable-widgets-tools lint",
+    "lint:fix": "pluggable-widgets-tools lint:fix",
+    "prerelease": "npm run lint",
+    "release": "pluggable-widgets-tools release:web"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@mendix/pluggable-widgets-tools": "^9.7.1"
+  },
+  "dependencies": {
+    "big.js": "^6.1.1",
+    "classnames": "^2.2.6"
+  }
+}

@@ -1,0 +1,5 @@
+dist/
+node_modules/
+'C:\\Users\\Gman\\Documents\\Mendix\\Lookup Preset Table System-main'/
+*.log
+.env
