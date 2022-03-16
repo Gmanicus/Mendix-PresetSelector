@@ -9,7 +9,7 @@
     "node": ">=12"
   },
   "config": {
-    "projectPath": "C:\\Users\\Grant S\\Documents\\Mendix\\Lookup Preset Table System-main/",
+    "projectPath": "C:\\Users\\Gman\\Documents\\Mendix\\PresetSelector-main\\",
     "mendixHost": "http://localhost:8080",
     "developmentPort": "3000"
   },
