@@ -31,15 +31,13 @@ export default class PresetSelector extends Component {
     }
 
     setAttribute(e) {
-        let typeValue = {}
-        if (e.target.value) { typeValue = JSON.parse(e.target.value); }
+        let valueData = JSON.parse(e.target.value);
 
-        let value = typeValue.value;
-        this.debug("Value is:", typeValue.value, typeValue.type);
-
-        switch (typeValue.type) {
+        let value = valueData.value;
+        switch (valueData.type) {
             case "Big": value = Big(value); break;
-            case "Date": value = Date(value); break;
+            case "Date": value = new Date(value); break;
+            case "Boolean": value = Boolean(value); break;
         }
 
         this.props.targetAttribute.setValue(value);
@@ -71,32 +69,19 @@ export default class PresetSelector extends Component {
         // So, I have to rely on this workaround to test whether the attribute types are correct
     }
 
-    componentDidMount() {
-        // Get other selectors on the page
-        let siblingSelectors = document.getElementsByClassName("preset-selector");
-        // Give them an event listener to update the dropdown lists
-        // This allows them to refresh based on their constraints in case their constraints are based on the value of the target object
-        for (var i=0, selector; selector = siblingSelectors[i]; i++) {
-            selector.addEventListener('input', () => {
-                setTimeout( () => { this.setState({ refresh: true }) }, 5 ); // SetTimeout is used to have the components update after the value has changed
-            })
-        }
-    }
-
-    // Get type and value data from an attribute
+        
+    // Get value data from an attribute
     // ○ ATTRIBUTE WITH VALUE
     //      Get type with constructor & formatter
     //      Get value from attribute
     // ○ DATASOURCE ATTRIBUTE • OBJECT WITH ATTRIBUTE
     //      Get type with .type
     //      Get value from object
+    // No way to tell between AutoNumbers, Strings, Binary
     getTypeValue(attribute, object) {
         let data = {};
         if (!object) {  // If not an attribute on an object
             // this.debug("ATTRIBUTE VALUE", attribute);
-
-            // No way to tell between AutoNumbers, Strings, Binary
-            // .universe holds acceptable values for Enums and Booleans
             
             // If this is a boolean attribute
             if (attribute.universe && attribute.universe.includes(true)) {
@@ -123,27 +108,52 @@ export default class PresetSelector extends Component {
                         break;
                 }
             }
-            this.debug(data);
+        // this.debug(data);
         } else {
-            // let attributeObject = attribute.get(object);
-            // data.value = attributeObject.value;
-            // this.debug("OBJECT ATTRIBUTE", data, attributeObject);
+            let attributeValue = attribute.get(object).value;
+            if (attributeValue == undefined || attributeValue == "") { return false; }  // Don't return undefined values or empty strings
+            data.actualType = attribute.type;
+            switch (attribute.type) {
+                case "Integer":
+                case "Decimal":
+                case "Long":
+                    data.type = "Big";
+                    data.value = Big(attributeValue);
+                    data.textValue = data.value.toString();
+                    break;
+                case "Boolean":
+                    data.type = "Boolean";
+                    data.value = attributeValue;
+                    data.textValue = (attributeValue) ? "Yes" : "No";
+                    break;
+                case "DateTime":
+                    data.type = "Date";
+                    data.value = Date.parse(attributeValue);
+                    data.textValue = attributeValue;
+                    break;
+                default:
+                    // Enumerations, A̶u̶t̶o̶N̶u̶m̶b̶e̶r̶s̶, Strings, and Binaries are all set as strings
+                    data.type = "String";
+                    data.value = (attributeValue) ? attributeValue : "";
+                    data.textValue = (attributeValue) ? attributeValue : "None"
+                    break;
+            }
         }
-            
-            
-        // // No way to tell between AutoNumbers and Strings
-        // switch (value.constructor.name) {
-        //     case "t": data.type = "Big"; break;
-        //     default:
-        //         data.type = value.constructor.name;
-        //         data.textValue = String(value)
-        //         break;
-        // }
-
-        // this.debug("Attribute type/value:", data);
         return data;
     }
-
+    
+    componentDidMount() {
+        // Get other selectors on the page
+        let siblingSelectors = document.getElementsByClassName("preset-selector");
+        // Give them an event listener to update the dropdown lists
+        // This allows them to refresh based on their constraints in case their constraints are based on the value of the target object
+        for (var i=0, selector; selector = siblingSelectors[i]; i++) {
+            selector.addEventListener('input', () => {
+                setTimeout( () => { this.setState({ refresh: true }) }, 5 ); // SetTimeout is used to have the components update after the value has changed
+            })
+        }
+    }
+    
     componentDidUpdate() {
         // If we haven't initialized and our properties have been updated and are available
         if ( this.state.refresh == true && this.props.presetObject.status === "available" && this.props.targetAttribute.status === "available") {
@@ -151,17 +161,16 @@ export default class PresetSelector extends Component {
             // if (!this.validateAttributeTypes() && !this.state.initialized) { return }
 
             // this.debug("Our props:", this.props);
-
+            
             let attributesToAdd = [];
             if (this.props.constraint) { // If the dev set a constraint
                 for (let object of this.props.presetObject.items) {
                     let constraintResult = this.props.constraint.get(object);
-
+                    
                     if (constraintResult.value) {  // If this item passes our constraint
                         attributesToAdd.push(object);
                     }
                 }
-
             } else {
                 attributesToAdd = this.props.presetObject.items;
             }
@@ -187,8 +196,12 @@ export default class PresetSelector extends Component {
             // Map attributes to a list of option elements
             let attributes = attributesToAdd.map((object) => {
                 // this.debug("Object:", object);
-                let typeValue = this.getTypeValue(this.props.presetAttribute, object);
-                if (typeValue) { return <option value={JSON.stringify(typeValue)}>{`${typeValue.type}, ${typeValue.value}`}</option>; }
+                let valueData = this.getTypeValue(this.props.presetAttribute, object);
+                let payload = {
+                    value: valueData.value,
+                    type: valueData.type
+                }
+                if (valueData) { return <option value={JSON.stringify(payload)} type={valueData.type}>{`${valueData.textValue}`}</option>; }
             });
 
             let shouldDisable = false;
@@ -204,9 +217,11 @@ export default class PresetSelector extends Component {
 
     render() {
         // If the value of targetAttribute is already set and has the same value, we want to default to this option in the drop-down
-        let selectedValue = JSON.stringify(this.getTypeValue( this.props.targetAttribute ));
-        return (
-            <select className="form-control preset-selector" value={selectedValue} onChange={this.setAttribute} disabled={this.state.disabled}>{this.state.options}</select>
-        )
+        let selectedValueData = this.getTypeValue( this.props.targetAttribute );
+        let payload = {
+            value: selectedValueData.value,
+            type: selectedValueData.type
+        }
+        return (<select className="form-control preset-selector" value={JSON.stringify(payload)} onChange={this.setAttribute} disabled={this.state.disabled}>{this.state.options}</select>)
     }
 }

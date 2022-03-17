@@ -71,7 +71,6 @@ Note: Preset and Target attribute types must be the same</description>
                         <attributeType name="HashString" />
                         <attributeType name="Integer" />
                         <attributeType name="Long" />
-                        <attributeType name="AutoNumber" />
                     </attributeTypes>
                 </property>
             </propertyGroup>
